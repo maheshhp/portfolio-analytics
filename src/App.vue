@@ -1,25 +1,28 @@
 <template>
-  <Dashboard/>
+  <Dashboard />
 </template>
 
 <script>
-import Dashboard from './views/Dashboard.vue'
+import Dashboard from "./views/Dashboard.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Dashboard
-  }
-}
+    Dashboard,
+  },
+};
 </script>
 
 <style>
+body {
+  margin: 0;
+  background-color: #f8f3ef;
+}
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: flex;
-  padding: 1rem;
-  color: #2c3e50;
+  color: #333;
 }
 </style>
