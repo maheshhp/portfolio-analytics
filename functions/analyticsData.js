@@ -27,8 +27,8 @@ exports.handler = async (event) => {
                     page: value.page,
                     userAgent: value.user_agent,
                     visitData: {
-                        time: value.visit_time.time || value.visit_time,
-                        tz: value.visit_time.tz || null
+                        time: value.visit_time?.time || value.visit_time,
+                        tz: value.visit_time?.tz || null
                     },
                     logTime: value.log_time
                 }
