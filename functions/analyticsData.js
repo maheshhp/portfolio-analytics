@@ -46,6 +46,8 @@ exports.handler = async (event) => {
             body: JSON.stringify(formattedData)
         };
     } catch (e) {
+        // for easier debugging in netlify console
+        console.log(e);
         return { statusCode: 500, body: 'Something Went Wrong' };
     } finally {
         await client.close();
