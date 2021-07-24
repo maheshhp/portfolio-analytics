@@ -23,12 +23,18 @@ exports.handler = async (event) => {
         const formattedData = {
             visits: analyticsData.length,
             pageWiseVisits: analyticsData.reduce((acc, value) => {
+                const visitTimeData = value.visit_time ? {
+                    time: value.visit_time.time,
+                    tz: value.visit_time.tz
+                } : {
+                    time: value.visit_time,
+                    tz: null
+                };
                 const formattedValue = {
                     page: value.page,
                     userAgent: value.user_agent,
-                    visitData: {
-                        time: value.visit_time.time || value.visit_time,
-                        tz: value.visit_time.tz || null
+                    visitTime: {
+                        ...visitTimeData
                     },
                     logTime: value.log_time
                 }
