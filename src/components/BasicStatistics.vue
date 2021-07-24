@@ -1,4 +1,5 @@
 <template>
+  <h4 class="highlights-heading">Highlights</h4>
   <div class="cards-container">
     <div class="card">
       <h3 class="card-heading">Total visits</h3>
@@ -22,41 +23,21 @@
 
 <script>
 export default {
-  data() {
-    return {
-      analyticsData: {
-        visits: "-",
-        pageWiseVisits: {},
-      },
-    };
-  },
-
-  methods: {
-    async getAnalyticsData() {
-      try {
-        const response = await fetch("/.netlify/functions/analyticsData");
-        this.analyticsData = await response.json();
-        console.log(this.analyticsData);
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  },
-
-  mounted() {
-    this.getAnalyticsData();
-  },
+  props: ["analyticsData"],
   name: "BasicStatistics",
 };
 </script>
 
 <style scoped>
+.highlights-heading {
+  padding: 0 0.5rem;
+}
+
 .cards-container {
-  width: 100%;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  padding: 0.5rem;
+  padding: 0 0.5rem;
 }
 
 .card {
@@ -65,7 +46,7 @@ export default {
   border-radius: 8px;
   background-color: white;
   padding: 1rem;
-  margin: 0.5rem 1.5rem;
+  margin: 0.5rem 1.5rem 0 0;
 }
 
 .card-heading {

@@ -8,14 +8,39 @@
         alt="profile pic"
       />
     </div>
-    <BasicStatistics />
+    <BasicStatistics :analyticsData="analyticsData" />
+    <StatsDetails :analyticsData="analyticsData" />
   </div>
 </template>
 
 <script>
 import BasicStatistics from "../components/BasicStatistics.vue";
+import StatsDetails from "../components/StatsDetails.vue";
 export default {
-  components: { BasicStatistics },
+  data() {
+    return {
+      analyticsData: {
+        visits: "-",
+        pageWiseVisits: {},
+      },
+    };
+  },
+
+  methods: {
+    async getAnalyticsData() {
+      try {
+        const response = await fetch("/.netlify/functions/analyticsData");
+        this.analyticsData = await response.json();
+      } catch (error) {
+        console.log(error);
+      }
+    },
+  },
+
+  mounted() {
+    this.getAnalyticsData();
+  },
+  components: { BasicStatistics, StatsDetails },
   name: "Dashboard",
 };
 </script>

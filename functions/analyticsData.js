@@ -22,7 +22,7 @@ exports.handler = async (event) => {
 
         const formattedData = {
             visits: analyticsData.length,
-            pageWiseVisits: analyticsData.reduce((acc, value) => {
+            pageWiseVisits: analyticsData.reverse().reduce((acc, value) => {
                 const visitTimeData = value.visit_time ? {
                     time: value.visit_time.time,
                     tz: value.visit_time.tz
