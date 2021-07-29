@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "mongodb": "^4.0.1",
+    "netlify-identity-widget": "^1.9.2",
     "vue": "^3.0.0",
     "vue3-table-lite": "^1.0.6"
   },

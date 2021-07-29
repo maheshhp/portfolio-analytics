@@ -1,7 +1,20 @@
 const { MongoClient } = require('mongodb');
 const { DB_URL } = process.env;
 
-exports.handler = async (event) => {
+exports.handler = async (event, context) => {
+    const { user } = context.clientContext;
+
+    // If no valid token sent in header, reject
+    if (!user || !user.app_metadata) {
+        return { statusCode: 401, body: 'Unauthorized' };
+    }
+
+    // If user is not admin, reject
+    const userMetadata = user.app_metadata;
+    if (!userMetadata.roles.includes('ADMIN')) {
+        return { statusCode: 403, body: 'Forbidden' };
+    }
+
     // Only allow GET requests
     if (event.httpMethod !== 'GET') {
         return { statusCode: 405, body: 'Method Not Allowed' };
