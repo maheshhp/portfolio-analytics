@@ -54,7 +54,7 @@ export default {
     this.getAnalyticsData();
   },
   components: { BasicStatistics, StatsDetails },
-  name: "Dashboard",
+  name: "DashboardPage",
 };
 </script>
 
