@@ -1,72 +1,73 @@
-const { MongoClient } = require('mongodb');
+const { MongoClient } = require("mongodb");
 const { DB_URL } = process.env;
 
 exports.handler = async (event, context) => {
-    const { user } = context.clientContext;
+  const { user } = context.clientContext;
 
-    // If no valid token sent in header, reject
-    if (!user || !user.app_metadata) {
-        return { statusCode: 401, body: 'Unauthorized' };
+  // If no valid token sent in header, reject
+  if (!user || !user.app_metadata) {
+    return { statusCode: 401, body: "Unauthorized" };
+  }
+
+  // If user is not admin, reject
+  const userMetadata = user.app_metadata;
+  if (!userMetadata.roles.includes("ADMIN")) {
+    return { statusCode: 403, body: "Forbidden" };
+  }
+
+  // Only allow GET requests
+  if (event.httpMethod !== "GET") {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
+
+  const client = await MongoClient.connect(DB_URL);
+
+  try {
+    if (!client) {
+      return { statusCode: 500, body: "Failed to connect to DB!" };
     }
 
-    // If user is not admin, reject
-    const userMetadata = user.app_metadata;
-    if (!userMetadata.roles.includes('ADMIN')) {
-        return { statusCode: 403, body: 'Forbidden' };
-    }
+    const db = client.db("portfolioVisit");
+    const collection = db.collection("visit");
+    const findRes = collection.find();
+    const analyticsData = await findRes.toArray();
 
-    // Only allow GET requests
-    if (event.httpMethod !== 'GET') {
-        return { statusCode: 405, body: 'Method Not Allowed' };
-    }
-
-    const client = await MongoClient.connect(DB_URL,
-        { useNewUrlParser: true, useUnifiedTopology: true });
-
-    try {
-        if (!client) {
-            return { statusCode: 500, body: 'Failed to connect to DB!' };
-        }
-
-        const db = client.db('portfolioVisit');
-        const collection = db.collection('visit');
-        const findRes = collection.find();
-        const analyticsData = await findRes.toArray()
-
-        const formattedData = {
-            visits: analyticsData.length,
-            pageWiseVisits: analyticsData.reverse().reduce((acc, value) => {
-                const visitTimeData = value.visit_time ? {
-                    time: value.visit_time.time,
-                    tz: value.visit_time.tz
-                } : {
-                    time: value.visit_time,
-                    tz: null
-                };
-                const formattedValue = {
-                    page: value.page,
-                    userAgent: value.user_agent,
-                    visitTime: {
-                        ...visitTimeData
-                    },
-                    logTime: value.log_time
-                }
-                if (acc[value.page]) {
-                    acc[value.page].push(formattedValue);
-                } else {
-                    acc[value.page] = [formattedValue];
-                }
-                return acc;
-            }, {}),
-        }
-
-        return {
-            statusCode: 200,
-            body: JSON.stringify(formattedData)
+    const formattedData = {
+      visits: analyticsData.length,
+      pageWiseVisits: analyticsData.reverse().reduce((acc, value) => {
+        const visitTimeData = value.visit_time
+          ? {
+              time: value.visit_time.time,
+              tz: value.visit_time.tz,
+            }
+          : {
+              time: value.visit_time,
+              tz: null,
+            };
+        const formattedValue = {
+          page: value.page,
+          userAgent: value.user_agent,
+          visitTime: {
+            ...visitTimeData,
+          },
+          logTime: value.log_time,
         };
-    } catch (e) {
-        return { statusCode: 500, body: 'Something Went Wrong' };
-    } finally {
-        await client.close();
-    }
+        if (acc[value.page]) {
+          acc[value.page].push(formattedValue);
+        } else {
+          acc[value.page] = [formattedValue];
+        }
+        return acc;
+      }, {}),
+    };
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify(formattedData),
+    };
+  } catch (e) {
+    return { statusCode: 500, body: "Something Went Wrong" };
+  } finally {
+    await client.close();
+  }
 };
