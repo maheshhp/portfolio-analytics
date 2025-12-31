@@ -45,15 +45,20 @@ export default {
           label: "Visit Time",
           field: "visitTime",
           display: (row) =>
-            `<div>Time: ${this.getParsedTime(
-              row.visitTime.time
-            )}</div><div>TZ: ${row.visitTime.tz || "-"}</div>`,
+            row.visitTime?.time
+              ? `<div>Time: ${this.getParsedTime(
+                  row.visitTime.time
+                )}</div><div>TZ: ${row.visitTime.tz || "-"}</div>`
+              : `<div>-</div>`,
           width: "25%",
         },
         {
           label: "Log Time",
           field: "logTime",
-          display: (row) => `<div>${this.getParsedTime(row.logTime)}</div>`,
+          display: (row) =>
+            row.logTime
+              ? `<div>${this.getParsedTime(row.logTime)}</div>`
+              : `<div>-</div>`,
           width: "25%",
         },
       ],
