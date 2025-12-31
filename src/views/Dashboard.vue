@@ -8,7 +8,8 @@
           alt="profile pic"
         />
         <h2>
-          Analytics | <a href="hpmahesh.me" target="_blank">hpmahesh.me</a>
+          Analytics |
+          <a href="https://hpmahesh.me" target="_blank">hpmahesh.me</a>
         </h2>
       </div>
 
@@ -30,7 +31,10 @@ export default {
     return {
       analyticsData: {
         visits: "-",
-        pageWiseVisits: {},
+        pageWiseVisits: {
+          BLOG: [],
+          HOME: [],
+        },
       },
     };
   },
@@ -40,8 +44,8 @@ export default {
       try {
         const response = await fetch("/.netlify/functions/analyticsData", {
           headers: {
-            'Authorization': `Bearer ${this.currentUser?.token?.access_token}`
-          }
+            Authorization: `Bearer ${this.currentUser?.token?.access_token}`,
+          },
         });
         this.analyticsData = await response.json();
       } catch (error) {
